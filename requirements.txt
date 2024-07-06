@@ -12,3 +12,4 @@ bcrypt
 uvicorn
 python-multipart
 gunicorn
+Pillow
