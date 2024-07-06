@@ -1,14 +1,19 @@
-from fastapi import APIRouter, File, UploadFile
+from fastapi import APIRouter, Depends, File, UploadFile, HTTPException, status
 from fastapi.responses import JSONResponse
 from tempfile import NamedTemporaryFile
 import shutil
 from ..services.prediction_service import predict_image
 from ..services.recipe_service import fetch_recipes
+from ..middleware.auth import get_current_user  # Import from middleware module
+from ..schemas.user_schema import User
 
 router = APIRouter()
 
 @router.post("/prediction")
-async def predict_image_endpoint(file: UploadFile = File(...)):
+async def predict_image_endpoint(
+    file: UploadFile = File(...), 
+    current_user: User = Depends(get_current_user)  # Adding the dependency for token validation
+):
     try:
         with NamedTemporaryFile(delete=False) as temp_file:
             shutil.copyfileobj(file.file, temp_file)
