@@ -1,5 +1,6 @@
+# pydantic_models.py
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 
 class RecipeBase(BaseModel):
     name: str
@@ -18,3 +19,9 @@ class Recipe(RecipeBase):
 
     class Config:
         orm_mode: True
+
+    @staticmethod
+    def from_orm(obj):
+        data = obj.__dict__.copy()
+        data['ingredients'] = obj.ingredients.split(',')
+        return Recipe(**data)

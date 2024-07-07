@@ -3,7 +3,7 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 from ..models.model import Recipe
-from ..schemas.recepie_schema import RecipeCreate
+from ..schemas.recipe_schema import RecipeCreate
 import json
 
 def fetch_recipes(query: str, continuation: Optional[str] = None):
