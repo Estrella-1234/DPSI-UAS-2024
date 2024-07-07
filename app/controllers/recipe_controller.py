@@ -48,20 +48,17 @@ async def create_recipe(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
-# Get all recipes
 @router.get("/recipes", response_model=List[Recipe])
 def get_all_recipes(db: Session = Depends(get_db)):
     recipes = db.query(RecipeModel).all()
-    return recipes
+    return [recipe.to_dict() for recipe in recipes]
 
-# Get recipe by id
 @router.get("/recipes/{recipe_id}", response_model=Recipe)
 def get_recipe_by_id(recipe_id: int, db: Session = Depends(get_db)):
     recipe = db.query(RecipeModel).filter(RecipeModel.id == recipe_id).first()
     if not recipe:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Recipe not found")
-    return recipe
-
+    return recipe.to_dict()
 
 @router.delete("/recipes/{recipe_id}", response_model=dict)
 def delete_recipe_endpoint(

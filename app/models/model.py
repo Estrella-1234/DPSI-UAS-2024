@@ -23,3 +23,15 @@ class Recipe(Base):
     owner_id = Column(Integer, ForeignKey('users.id'))
 
     owner = relationship("User", back_populates="recipes")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "image": self.image,
+            "preparation_time": self.preparation_time,
+            "calories": self.calories,
+            "ingredients": self.ingredients if self.ingredients else [],
+            "url": self.url,
+            "owner_id": self.owner_id
+        }
