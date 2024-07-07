@@ -31,7 +31,6 @@ def fetch_recipes_endpoint(
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
-
 @router.post("/recipes", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_recipe(
     recipe: RecipeCreate, 
@@ -46,7 +45,7 @@ async def create_recipe(
         return {"message": "Recipe created successfully"}
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-
+    
 
 @router.get("/recipes", response_model=List[Recipe])
 def get_all_recipes(db: Session = Depends(get_db)):
@@ -60,17 +59,19 @@ def get_recipe_by_id(recipe_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Recipe not found")
     return recipe.to_dict()
 
+
 @router.delete("/recipes/{recipe_id}", response_model=dict)
 def delete_recipe_endpoint(
-    recipe_id: int,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+        recipe_id: int,
+        current_user: User = Depends(get_current_user),
+        db: Session = Depends(get_db)
 ):
-    db_recipe = db.query(RecipeModel).filter(RecipeModel.id == recipe_id, RecipeModel.owner_id == current_user.id).first()
+    db_recipe = db.query(RecipeModel).filter(RecipeModel.id == recipe_id,
+                                             RecipeModel.owner_id == current_user.id).first()
     if not db_recipe:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Recipe not found")
-    
+
     db.delete(db_recipe)
     db.commit()
-    
+
     return {"message": "Recipe deleted successfully"}
