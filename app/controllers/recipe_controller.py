@@ -11,11 +11,13 @@ from ..models.model import Recipe as RecipeModel
 
 router = APIRouter()
 
+
+# Endpoint untuk mengambil resep dari Edamam berdasarkan query yang diberikan
 @router.get("/edamam-recipes", response_model=List[Recipe])
 def fetch_recipes_endpoint(
     q: str, 
     _cont: Optional[str] = Query(None), 
-    current_user: User = Depends(get_current_user), 
+    current_user: User = Depends(get_current_user),  # Memastikan hanya pengguna yang terautentikasi yang dapat mengakses
     db: Session = Depends(get_db)
 ):
     try:
@@ -31,11 +33,13 @@ def fetch_recipes_endpoint(
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
+
+# Endpoint untuk menyimpan recipe yang di inginkan
 @router.post("/recipes", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_recipe(
     recipe: RecipeCreate, 
     db: Session = Depends(get_db), 
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user) # Memastikan hanya pengguna yang terautentikasi yang dapat mengakses
 ):
     try:
         db_recipe = RecipeModel(**recipe.dict(), owner_id=current_user.id)
@@ -53,7 +57,11 @@ def get_all_recipes(db: Session = Depends(get_db)):
     return [recipe.to_dict() for recipe in recipes]
 
 @router.get("/recipes/{recipe_id}", response_model=Recipe)
-def get_recipe_by_id(recipe_id: int, db: Session = Depends(get_db)):
+def get_recipe_by_id(
+        recipe_id: int,
+        current_user: User = Depends(get_current_user), # Memastikan hanya pengguna yang terautentikasi yang dapat mengakses
+        db: Session = Depends(get_db)
+        ):
     recipe = db.query(RecipeModel).filter(RecipeModel.id == recipe_id).first()
     if not recipe:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Recipe not found")
@@ -63,7 +71,7 @@ def get_recipe_by_id(recipe_id: int, db: Session = Depends(get_db)):
 @router.delete("/recipes/{recipe_id}", response_model=dict)
 def delete_recipe_endpoint(
         recipe_id: int,
-        current_user: User = Depends(get_current_user),
+        current_user: User = Depends(get_current_user), # Memastikan hanya pengguna yang terautentikasi yang dapat mengakses
         db: Session = Depends(get_db)
 ):
     db_recipe = db.query(RecipeModel).filter(RecipeModel.id == recipe_id,

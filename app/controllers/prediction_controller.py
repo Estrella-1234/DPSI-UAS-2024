@@ -4,7 +4,7 @@ from tempfile import NamedTemporaryFile
 import shutil
 from ..services.prediction_service import predict_image
 from ..services.recipe_service import fetch_recipes
-from ..middleware.auth import get_current_user  # Import from middleware module
+from ..middleware.auth import get_current_user
 from ..schemas.user_schema import User
 
 router = APIRouter()
