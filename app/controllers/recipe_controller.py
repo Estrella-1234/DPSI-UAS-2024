@@ -52,8 +52,10 @@ async def create_recipe(
     
 
 @router.get("/recipes", response_model=List[Recipe])
-def get_all_recipes(db: Session = Depends(get_db)):
-    recipes = db.query(RecipeModel).all()
+def get_all_recipes(
+        current_user: User = Depends(get_current_user), # Memastikan hanya pengguna yang terautentikasi yang dapat mengakses
+        db: Session = Depends(get_db)):
+    recipes = db.query(RecipeModel).filter(RecipeModel.owner_id == current_user.id).all()
     return [recipe.to_dict() for recipe in recipes]
 
 @router.get("/recipes/{recipe_id}", response_model=Recipe)
