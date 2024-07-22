@@ -3,6 +3,7 @@ fastapi
 fastapi-cli
 SQLAlchemy
 PyMySQL
+mysqlclient
 passlib
 jose
 python-jose[cryptography]
