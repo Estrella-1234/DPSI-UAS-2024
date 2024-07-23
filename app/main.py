@@ -9,7 +9,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# Test Command
+
 @app.get("/")
 def hello():
     return {"message": "Hello! We are Rechef team!"}
