@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from .controllers import user_controller
 from .controllers import recipe_controller
 from .controllers import prediction_controller
